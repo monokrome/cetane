@@ -1,0 +1,24 @@
+[package]
+name = "cetane"
+version = "0.1.0"
+edition = "2021"
+description = "Django-inspired database migrations for Diesel"
+license = "MIT"
+repository = "https://github.com/monokrome/petrol"
+
+[features]
+default = []
+sqlite = ["dep:rusqlite"]
+postgres = ["dep:postgres"]
+mysql = ["dep:mysql"]
+
+[dependencies]
+rusqlite = { version = "0.31", optional = true }
+postgres = { version = "0.19", optional = true }
+mysql = { version = "25", optional = true }
+sea-query = { version = "0.32.7", features = ["backend-sqlite", "backend-postgres", "backend-mysql"] }
+
+[dev-dependencies]
+rusqlite = { version = "0.31", features = ["bundled"] }
+postgres = "0.19"
+mysql = "25"
