@@ -156,7 +156,9 @@ mod tests {
     #[test]
     fn mysql_add_field() {
         let backend = MySql;
-        let field = Field::new("email", FieldType::VarChar(255)).not_null().unique();
+        let field = Field::new("email", FieldType::VarChar(255))
+            .not_null()
+            .unique();
 
         let sql = backend.add_field_sql("users", &field);
         assert_eq!(sql.len(), 1);

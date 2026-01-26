@@ -92,7 +92,11 @@ fn setup_registry() -> MigrationRegistry {
         Migration::new("0001_create_users").operation(
             CreateTable::new("users")
                 .add_field(Field::new("id", FieldType::Serial).primary_key())
-                .add_field(Field::new("email", FieldType::VarChar(255)).not_null().unique())
+                .add_field(
+                    Field::new("email", FieldType::VarChar(255))
+                        .not_null()
+                        .unique(),
+                )
                 .add_field(
                     Field::new("created_at", FieldType::Timestamp)
                         .not_null()
@@ -302,13 +306,13 @@ fn foreign_key_cascade_deletes() {
         .unwrap();
 
     let mut conn = pool.get_conn().unwrap();
-    conn.exec_drop("INSERT INTO users (email) VALUES (?)", ("test@example.com",))
-        .unwrap();
+    conn.exec_drop(
+        "INSERT INTO users (email) VALUES (?)",
+        ("test@example.com",),
+    )
+    .unwrap();
 
-    let user_id: u64 = conn
-        .query_first("SELECT id FROM users")
-        .unwrap()
-        .unwrap();
+    let user_id: u64 = conn.query_first("SELECT id FROM users").unwrap().unwrap();
 
     conn.exec_drop(
         "INSERT INTO posts (user_id, title) VALUES (?, ?)",

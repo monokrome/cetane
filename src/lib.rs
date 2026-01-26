@@ -104,7 +104,7 @@ mod tests {
     fn migration_rollback() {
         let mut registry = MigrationRegistry::new();
 
-        let users_fields = vec![
+        let users_fields = [
             Field::new("id", FieldType::Serial).primary_key(),
             Field::new("email", FieldType::Text).not_null(),
         ];

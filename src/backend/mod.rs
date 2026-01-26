@@ -1,15 +1,15 @@
-mod sqlite;
-mod postgres;
 mod mysql;
+mod postgres;
+mod sqlite;
 
 pub use mysql::MySql;
 pub use postgres::Postgres;
 pub use sqlite::Sqlite;
 
 use sea_query::{
-    Alias, ColumnDef, ForeignKey as SeaForeignKey, ForeignKeyAction, Index as SeaIndex, Table,
-    TableCreateStatement, TableDropStatement, TableRenameStatement, TableAlterStatement,
-    IndexCreateStatement, IndexDropStatement,
+    Alias, ColumnDef, ForeignKey as SeaForeignKey, ForeignKeyAction, Index as SeaIndex,
+    IndexCreateStatement, IndexDropStatement, Table, TableAlterStatement, TableCreateStatement,
+    TableDropStatement, TableRenameStatement,
 };
 
 use crate::field::{Field, FieldType, ReferentialAction};
@@ -178,8 +178,10 @@ pub trait Backend: Send + Sync {
             } => {
                 // sea-query FK support is limited for ALTER TABLE ADD CONSTRAINT
                 let cols: Vec<String> = columns.iter().map(|c| self.quote_identifier(c)).collect();
-                let ref_cols: Vec<String> =
-                    ref_columns.iter().map(|c| self.quote_identifier(c)).collect();
+                let ref_cols: Vec<String> = ref_columns
+                    .iter()
+                    .map(|c| self.quote_identifier(c))
+                    .collect();
                 format!(
                     "ALTER TABLE {} ADD CONSTRAINT {} FOREIGN KEY ({}) REFERENCES {} ({}) ON DELETE {} ON UPDATE {}",
                     self.quote_identifier(table),

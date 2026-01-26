@@ -353,12 +353,14 @@ fn transaction_rollback_on_failure() {
         Migration::new("0002_will_fail")
             .depends_on(&["0001_create_test"])
             .forward_ops(vec![
-                Box::new(RunSql::new("INSERT INTO test_table (name) VALUES ('before_fail')")),
+                Box::new(RunSql::new(
+                    "INSERT INTO test_table (name) VALUES ('before_fail')",
+                )),
                 Box::new(RunSql::new("THIS IS INVALID SQL THAT WILL FAIL")),
             ])
-            .backward_ops(vec![
-                Box::new(RunSql::new("DELETE FROM test_table WHERE name = 'before_fail'")),
-            ]),
+            .backward_ops(vec![Box::new(RunSql::new(
+                "DELETE FROM test_table WHERE name = 'before_fail'",
+            ))]),
     );
 
     let mut migrator = Migrator::new(&registry, &Sqlite, state);

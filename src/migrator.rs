@@ -56,7 +56,10 @@ impl<'a, S: MigrationStateStore> Migrator<'a, S> {
             .collect())
     }
 
-    pub fn plan_backward(&mut self, target: Option<&str>) -> Result<Vec<&'static str>, MigrationError> {
+    pub fn plan_backward(
+        &mut self,
+        target: Option<&str>,
+    ) -> Result<Vec<&'static str>, MigrationError> {
         let order = self.registry.resolve_order()?;
         let applied =
             self.state
@@ -661,14 +664,9 @@ mod tests {
     #[test]
     fn non_atomic_migration_skips_transaction() {
         let mut registry = MigrationRegistry::new();
-        registry.register(
-            Migration::new("0001_create_users")
-                .atomic(false)
-                .operation(
-                    CreateTable::new("users")
-                        .add_field(Field::new("id", FieldType::Serial).primary_key()),
-                ),
-        );
+        registry.register(Migration::new("0001_create_users").atomic(false).operation(
+            CreateTable::new("users").add_field(Field::new("id", FieldType::Serial).primary_key()),
+        ));
 
         let state = InMemoryState::new();
         let mut migrator = Migrator::new(&registry, &Sqlite, state);
@@ -745,12 +743,9 @@ mod tests {
     #[test]
     fn backward_migration_failure_mid_way() {
         let mut registry = MigrationRegistry::new();
-        registry.register(
-            Migration::new("0001_create_users").operation(
-                CreateTable::new("users")
-                    .add_field(Field::new("id", FieldType::Serial).primary_key()),
-            ),
-        );
+        registry.register(Migration::new("0001_create_users").operation(
+            CreateTable::new("users").add_field(Field::new("id", FieldType::Serial).primary_key()),
+        ));
         registry.register(
             Migration::new("0002_create_posts")
                 .depends_on(&["0001_create_users"])

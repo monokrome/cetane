@@ -308,10 +308,7 @@ fn can_insert_data_after_migration() {
         .unwrap();
 
     let user_id: i32 = client
-        .query_one(
-            "SELECT id FROM users WHERE email = 'test@example.com'",
-            &[],
-        )
+        .query_one("SELECT id FROM users WHERE email = 'test@example.com'", &[])
         .map(|row| row.get(0))
         .unwrap();
 

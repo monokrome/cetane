@@ -1,0 +1,9 @@
+{
+  "threshold": 7,
+  "minLines": 10,
+  "minTokens": 50,
+  "reporters": ["console"],
+  "ignore": ["**/target/**", "**/Cargo.lock", "**/tests/**"],
+  "pattern": "**/*.rs",
+  "failOnError": true
+}

@@ -623,8 +623,8 @@ mod tests {
         let order = registry.resolve_order().unwrap();
         assert_eq!(order.len(), 3);
         // All should be present (order may vary)
-        assert!(order.iter().any(|x| *x == "users"));
-        assert!(order.iter().any(|x| *x == "posts"));
-        assert!(order.iter().any(|x| *x == "comments"));
+        assert!(order.contains(&"users"));
+        assert!(order.contains(&"posts"));
+        assert!(order.contains(&"comments"));
     }
 }

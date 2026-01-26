@@ -55,7 +55,10 @@ impl Backend for Sqlite {
 
     fn drop_constraint_sql(&self, _table: &str, constraint_name: &str) -> String {
         // SQLite doesn't support DROP CONSTRAINT, but indexes can be dropped
-        format!("DROP INDEX IF EXISTS \"{}\"", constraint_name.replace('"', "\"\""))
+        format!(
+            "DROP INDEX IF EXISTS \"{}\"",
+            constraint_name.replace('"', "\"\"")
+        )
     }
 
     fn quote_identifier(&self, name: &str) -> String {
