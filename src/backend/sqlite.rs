@@ -189,6 +189,7 @@ mod tests {
             name: "idx_users_email".to_string(),
             columns: vec![("email".to_string(), IndexOrder::Asc)],
             unique: false,
+            where_clause: None,
         };
 
         let sql = backend.add_index_sql("users", &index);
@@ -205,10 +206,26 @@ mod tests {
             name: "idx_users_email".to_string(),
             columns: vec![("email".to_string(), IndexOrder::Asc)],
             unique: true,
+            where_clause: None,
         };
 
         let sql = backend.add_index_sql("users", &index);
         assert!(sql.contains("CREATE UNIQUE INDEX"));
+    }
+
+    #[test]
+    fn sqlite_create_partial_index() {
+        let backend = Sqlite;
+        let index = Index {
+            name: "idx_active_users".to_string(),
+            columns: vec![("email".to_string(), IndexOrder::Asc)],
+            unique: false,
+            where_clause: Some("status = 'active'".to_string()),
+        };
+
+        let sql = backend.add_index_sql("users", &index);
+        assert!(sql.contains("CREATE INDEX"));
+        assert!(sql.contains("WHERE status = 'active'"));
     }
 
     #[test]

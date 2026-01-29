@@ -159,12 +159,28 @@ mod tests {
             name: "idx_users_email".to_string(),
             columns: vec![("email".to_string(), IndexOrder::Asc)],
             unique: false,
+            where_clause: None,
         };
 
         let sql = backend.add_index_sql("users", &index);
         assert!(sql.contains("CREATE INDEX"));
         assert!(sql.contains("\"idx_users_email\""));
         assert!(sql.contains("\"users\""));
+    }
+
+    #[test]
+    fn postgres_create_partial_index() {
+        let backend = Postgres;
+        let index = Index {
+            name: "idx_active_users".to_string(),
+            columns: vec![("email".to_string(), IndexOrder::Asc)],
+            unique: false,
+            where_clause: Some("deleted_at IS NULL".to_string()),
+        };
+
+        let sql = backend.add_index_sql("users", &index);
+        assert!(sql.contains("CREATE INDEX"));
+        assert!(sql.contains("WHERE deleted_at IS NULL"));
     }
 
     #[test]

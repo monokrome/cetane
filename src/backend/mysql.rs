@@ -174,6 +174,7 @@ mod tests {
             name: "idx_users_email".to_string(),
             columns: vec![("email".to_string(), IndexOrder::Asc)],
             unique: false,
+            where_clause: None,
         };
 
         let sql = backend.add_index_sql("users", &index);

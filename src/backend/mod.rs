@@ -137,7 +137,15 @@ pub trait Backend: Send + Sync {
             };
         }
 
-        self.build_index_create(stmt.to_owned())
+        let mut sql = self.build_index_create(stmt.to_owned());
+
+        // Append WHERE clause for partial indexes (not supported by sea-query)
+        if let Some(ref condition) = index.where_clause {
+            sql.push_str(" WHERE ");
+            sql.push_str(condition);
+        }
+
+        sql
     }
 
     fn drop_index_sql(&self, table: &str, index_name: &str) -> String {

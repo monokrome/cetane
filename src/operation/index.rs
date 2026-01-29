@@ -13,6 +13,7 @@ pub struct Index {
     pub name: String,
     pub columns: Vec<(String, IndexOrder)>,
     pub unique: bool,
+    pub where_clause: Option<String>,
 }
 
 impl Index {
@@ -21,6 +22,7 @@ impl Index {
             name: name.into(),
             columns: Vec::new(),
             unique: false,
+            where_clause: None,
         }
     }
 
@@ -36,6 +38,13 @@ impl Index {
 
     pub fn unique(mut self) -> Self {
         self.unique = true;
+        self
+    }
+
+    /// Add a WHERE clause to create a partial index.
+    /// Example: `.filter("status = 'active'")`
+    pub fn filter(mut self, condition: impl Into<String>) -> Self {
+        self.where_clause = Some(condition.into());
         self
     }
 }
@@ -221,5 +230,30 @@ mod tests {
     fn remove_index_describe() {
         let op = RemoveIndex::new("users", "idx_email");
         assert_eq!(op.describe(), "Remove index idx_email from users");
+    }
+
+    #[test]
+    fn partial_index_with_filter() {
+        let index = Index::new("idx_active_users")
+            .column("email")
+            .filter("status = 'active'");
+        let op = AddIndex::new("users", index);
+
+        let sql = op.forward(&Sqlite);
+        assert!(sql[0].contains("CREATE INDEX"));
+        assert!(sql[0].contains("WHERE status = 'active'"));
+    }
+
+    #[test]
+    fn partial_unique_index() {
+        let index = Index::new("idx_unique_active_email")
+            .column("email")
+            .unique()
+            .filter("deleted_at IS NULL");
+        let op = AddIndex::new("users", index);
+
+        let sql = op.forward(&Sqlite);
+        assert!(sql[0].contains("CREATE UNIQUE INDEX"));
+        assert!(sql[0].contains("WHERE deleted_at IS NULL"));
     }
 }
