@@ -2,7 +2,7 @@
 name = "cetane"
 version = "0.1.1"
 edition = "2021"
-description = "Django-inspired database migrations for Diesel"
+description = "Django-inspired schema migration framework for Rust"
 license = "BSD-2-Clause"
 repository = "https://github.com/monokrome/cetane"
 
